@@ -15,6 +15,15 @@ class CreateTasksTable extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
+            // To create a variable it is done with $ example $table
+            $table->string('titulo');
+            $table->text('descripcion');
+            //nullable is used to say that it can have a null value
+            $table->enum('estado', ["pendiente", "en_progreso", "completada"])->nullable();
+            $table->date('fecha_vencimiento');
+            // ForeignId() creates the column for the foreign key
+            // constrained() establishes the relationship with another table
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
     }
