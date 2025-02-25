@@ -37,7 +37,7 @@ class AuthController extends Controller
         if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']])) {
             $user = Auth::user();
             //the createToken error is part of the vscode
-            $token = $user->createToken('YourAppName')->plainTextToken;
+            $token = $user->createToken('AuthToken')->plainTextToken;
 
             return response()->json(['token' => $token]);
         }
