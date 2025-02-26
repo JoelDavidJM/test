@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TareaEstadoCambiado;
 use App\Models\Task;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -127,8 +129,13 @@ class TaskController extends Controller
             );
         }
         try {
+            // the task is obtained before being modified
+            $estadoSinActualizar = $task->estado;
             // update update the task with the data provided
             $task->update($request->only('titulo', 'descripcion', 'estado', 'fecha_vencimiento', 'user_id'));
+            if($estadoSinActualizar !== $task->estado) {
+                Mail::to('jodajativa17@gmail.com')->send(new TareaEstadoCambiado($task));
+            }
             return response()->json($task, Response::HTTP_OK);//HTTP 200
         } catch (Exception $e) {
             return response()->json(

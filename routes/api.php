@@ -24,7 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // routes to search in postman
 Route::get('/tasks', [TaskController::class, 'index']);
 Route::post('/tasks', [TaskController::class, 'store']);
-Route::get('/tasks/{task}', [TaskController::class, 'show']);
+// ->name('tasks.show') allows you to generate a name instead of a url that still allows you to access the data
+Route::get('/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
 Route::put('/tasks/{task}', [TaskController::class, 'update']);
 Route::delete('/tasks/{task}', [TaskController::class, 'destroy']);
 
