@@ -34,4 +34,5 @@ Route::post('/users', [UserController::class, 'store']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+// middleware('auth:sanctum is for users authenticated
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);

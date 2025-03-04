@@ -36,7 +36,9 @@ class TaskController extends Controller
             $sortBy = $request->query('sort_by', 'fecha_vencimiento');
             $order = $request->query('order', 'asc');
             //It is used to obtain the values ​​in this case of task
-            $query = Task::query();
+            // with is to bring you users with the related task
+            // Task::query() create a new query
+            $query = Task::query()->with('user');;
             // A condition is made to see if the state has information
             if($estado){
                 $query->where('estado', $estado);
@@ -100,6 +102,7 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         try {
+            $task->load('user');
             return response()->json($task, Response::HTTP_OK);//HTTP 200
         } catch (Exception $e) {
             return response()->json(
@@ -157,7 +160,7 @@ class TaskController extends Controller
                 [
                     'message' => 'Task deleted successfully'
                 ],
-                Response::HTTP_NO_CONTENT
+                Response::HTTP_OK
             );
         } catch (Exception $e) {
             return response()->json(

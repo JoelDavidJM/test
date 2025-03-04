@@ -11,46 +11,61 @@ class AuthController extends Controller
     // Users register here
     public function register(Request $request)
     {
-        $validated = $request->validate([
+        $validator = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'email' => 'required|string|max:255|unique:users',
+            // With confirmed you have to confirm the password
+            'password' => 'required|string|min:8|confirmed'
         ]);
-
+        // create user
         $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
+            'name' => $validator['name'],
+            'email' => $validator['email'],
+            'password' => bcrypt($validator['password'])
         ]);
 
-        return response()->json(['message' => 'User registered successfully'], 201);
+        return response()->json(
+            [
+                'message' => 'User register successfully'
+            ],
+            201
+        );
     }
 
     // Here users log in with email and password
+    // login user
     public function login(Request $request)
     {
-        $validated = $request->validate([
+        $validator = $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8'
         ]);
-
-        if (Auth::attempt(['email' => $validated['email'], 'password' => $validated['password']])) {
+        // Auth::attempt() to verify credentials
+        if (Auth::attempt(['email' => $validator['email'], 'password' => $validator['password']])) {
+            // Auth::user(); It is to verify data that was created
             $user = Auth::user();
-            //the createToken error is part of the vscode
+            // createToken() generates a token for the authenticated user.
+            // plainTextToken gets the token in plain text
             $token = $user->createToken('AuthToken')->plainTextToken;
-
-            return response()->json(['token' => $token]);
+            return response()->json(
+                [
+                    'token' => $token
+                ]
+            );
         }
-
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return response()->json(
+            [
+                'message' => 'invalid credential'
+            ],401
+        );
     }
 
-    public function logout(Request $request)
-    {
+     //logout
+     public function logout(Request $request) {
+        // $request->user()->tokens returns the authenticated user
         $request->user()->tokens->each(function ($token) {
             $token->delete();
         });
-
-        return response()->json(['message' => 'Logged out successfully']);
+        return response()->json(['message' => 'logged out successfully']);
     }
 }

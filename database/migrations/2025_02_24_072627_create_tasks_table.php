@@ -23,7 +23,8 @@ class CreateTasksTable extends Migration
             $table->date('fecha_vencimiento');
             // ForeignId() creates the column for the foreign key
             // constrained() establishes the relationship with another table
-            $table->foreignId('user_id')->constrained('users');
+            // onDelete If the user is deleted, the task associated with it is deleted.
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
